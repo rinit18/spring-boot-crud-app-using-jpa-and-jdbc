@@ -1,8 +1,8 @@
-package com.SPRING.BOOT.CRUD.APP.SpringBootCrudApp.Reposotry;
+package com.rinit.springbootcrud.Reposotry;
 
 
 
-import com.SPRING.BOOT.CRUD.APP.SpringBootCrudApp.Model.Student;
+import com.rinit.springbootcrud.Model.Student;
 
 import java.util.List;
 

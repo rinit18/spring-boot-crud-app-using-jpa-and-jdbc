@@ -1,4 +1,4 @@
-package com.SPRING.BOOT.CRUD.APP.SpringBootCrudApp.Model;
+package com.rinit.springbootcrud.Model;
 
 import jakarta.persistence.*;
 

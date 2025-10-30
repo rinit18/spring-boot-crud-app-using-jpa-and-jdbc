@@ -1,4 +1,4 @@
-package com.SPRING.BOOT.CRUD.APP.SpringBootCrudApp;
+package com.rinit.springbootcrud;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

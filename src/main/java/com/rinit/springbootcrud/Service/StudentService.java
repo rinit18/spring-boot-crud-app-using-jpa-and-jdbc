@@ -1,9 +1,9 @@
-package com.SPRING.BOOT.CRUD.APP.SpringBootCrudApp.Service;
+package com.rinit.springbootcrud.Service;
 
 
 
-import com.SPRING.BOOT.CRUD.APP.SpringBootCrudApp.Model.Student;
-import com.SPRING.BOOT.CRUD.APP.SpringBootCrudApp.Reposotry.StudentDao;
+import com.rinit.springbootcrud.Model.Student;
+import com.rinit.springbootcrud.Reposotry.StudentDao;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 

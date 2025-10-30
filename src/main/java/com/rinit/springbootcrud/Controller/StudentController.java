@@ -1,8 +1,8 @@
-package com.SPRING.BOOT.CRUD.APP.SpringBootCrudApp.Controller;
+package com.rinit.springbootcrud.Controller;
 
 
-import com.SPRING.BOOT.CRUD.APP.SpringBootCrudApp.Model.Student;
-import com.SPRING.BOOT.CRUD.APP.SpringBootCrudApp.Service.StudentService;
+import com.rinit.springbootcrud.Model.Student;
+import com.rinit.springbootcrud.Service.StudentService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 

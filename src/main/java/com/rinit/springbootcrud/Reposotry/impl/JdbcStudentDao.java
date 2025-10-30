@@ -1,8 +1,8 @@
-package com.SPRING.BOOT.CRUD.APP.SpringBootCrudApp.Reposotry.impl;
+package com.rinit.springbootcrud.Reposotry.impl;
 
 
-import com.SPRING.BOOT.CRUD.APP.SpringBootCrudApp.Model.Student;
-import com.SPRING.BOOT.CRUD.APP.SpringBootCrudApp.Reposotry.StudentDao;
+import com.rinit.springbootcrud.Model.Student;
+import com.rinit.springbootcrud.Reposotry.StudentDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
