@@ -181,7 +181,8 @@
 <script>
     document.addEventListener('DOMContentLoaded', () => {
         // --- API & STATE MANAGEMENT ---
-        const API_URL = 'http://localhost:8080/students'; // The endpoint for your Spring Boot controller
+        const API_URL = 'https://springbootcrudapp-production.up.railway.app/students';
+        // The endpoint for your Spring Boot controller
         let students = []; // This will be populated from the API, not hardcoded.
         let studentToDeleteId = null;
 
