@@ -1,83 +1,6 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Student Management</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f7f9fb;
-            padding: 20px;
-        }
-        h1 {
-            color: #333;
-            text-align: center;
-        }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 15px;
-        }
-        th, td {
-            padding: 10px;
-            border: 1px solid #ddd;
-            text-align: center;
-        }
-        th {
-            background-color: #007bff;
-            color: white;
-        }
-        button {
-            padding: 5px 10px;
-            background-color: #28a745;
-            border: none;
-            color: white;
-            cursor: pointer;
-        }
-        button.delete {
-            background-color: #dc3545;
-        }
-        button:hover {
-            opacity: 0.8;
-        }
-        form {
-            margin-top: 20px;
-            display: flex;
-            gap: 10px;
-            justify-content: center;
-        }
-        input {
-            padding: 8px;
-            border: 1px solid #ccc;
-        }
-    </style>
-</head>
-<body>
-<h1>Student Management</h1>
-
-<table id="studentsTable">
-    <thead>
-    <tr>
-        <th>ID</th>
-        <th>Name</th>
-        <th>Marks</th>
-        <th>Actions</th>
-    </tr>
-    </thead>
-    <tbody id="studentBody">
-    <tr><td colspan="4">Loading...</td></tr>
-    </tbody>
-</table>
-
-<form id="studentForm">
-    <input type="text" id="name" placeholder="Name" required>
-    <input type="number" id="marks" placeholder="Marks" required>
-    <button type="submit">Add Student</button>
-</form>
-
 <script>
-    const API_URL = "https://your-railway-domain.up.railway.app/students"; // ✅ Change this to your Railway backend URL
+    // ✅ URL has been updated to your backend
+    const API_URL = "https://spring-boot-crud-app-using-jpa-and-jdbc-production.up.railway.app/students";
 
     async function fetchStudents() {
         try {
@@ -134,5 +57,3 @@
     document.getElementById("studentForm").addEventListener("submit", addStudent);
     fetchStudents();
 </script>
-</body>
-</html>
