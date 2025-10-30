@@ -1,412 +1,158 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Student Management Dashboard</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Student Management</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <style>
-        body {
-            font-family: 'Inter', sans-serif;
-        }
-        /* Custom scrollbar for better aesthetics */
-        ::-webkit-scrollbar {
-            width: 8px;
-        }
-        ::-webkit-scrollbar-track {
-            background: #f1f1f1;
-        }
-        ::-webkit-scrollbar-thumb {
-            background: #888;
-            border-radius: 4px;
-        }
-        ::-webkit-scrollbar-thumb:hover {
-            background: #555;
-        }
-        .dark ::-webkit-scrollbar-track {
-            background: #2d3748;
-        }
-        .dark ::-webkit-scrollbar-thumb {
-            background: #4a5568;
-        }
-        .dark ::-webkit-scrollbar-thumb:hover {
-            background: #718096;
-        }
-        /* Animation for modals and notifications */
-        .fade-in { animation: fadeIn 0.3s ease-out; }
-        .fade-out { animation: fadeOut 0.3s ease-in; }
-        .slide-in { animation: slideIn 0.3s ease-out; }
-        .slide-out { animation: slideOut 0.3s ease-in; }
-
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-        @keyframes fadeOut { from { opacity: 1; } to { opacity: 0; } }
-        @keyframes slideIn { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
-        @keyframes slideOut { from { transform: translateY(0); opacity: 1; } to { transform: translateY(20px); opacity: 0; } }
-
-        /* Highlight animation for found student */
-        .highlight {
-            animation: highlight-row 2s ease-out;
-        }
-        @keyframes highlight-row {
-            0%, 100% { background-color: transparent; }
-            25%, 75% { background-color: rgba(52, 211, 153, 0.3); } /* Using teal color */
-        }
-    </style>
 </head>
-<body class="bg-gray-100 dark:bg-gray-900 text-gray-800 dark:text-gray-200 transition-colors duration-300">
+<body class="bg-gray-100 text-gray-900">
+<div class="container mx-auto p-6">
+    <h1 class="text-3xl font-bold text-center mb-6">🎓 Student Management System</h1>
 
-<div class="container mx-auto p-4 md:p-8">
-
-    <!-- Header -->
-    <header class="flex justify-between items-center mb-8">
-        <div>
-            <h1 class="text-3xl font-bold text-gray-800 dark:text-white">Student Dashboard</h1>
-            <p class="text-gray-500 dark:text-gray-400">Manage student records efficiently.</p>
+    <!-- Add Student Form -->
+    <form id="studentForm" class="bg-white shadow-md rounded-lg p-6 mb-8">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <input type="hidden" id="studentId" />
+            <input
+                    type="text"
+                    id="name"
+                    placeholder="Enter Name"
+                    class="border rounded p-2 w-full"
+                    required
+            />
+            <input
+                    type="text"
+                    id="email"
+                    placeholder="Enter Email"
+                    class="border rounded p-2 w-full"
+                    required
+            />
+            <input
+                    type="text"
+                    id="course"
+                    placeholder="Enter Course"
+                    class="border rounded p-2 w-full"
+                    required
+            />
         </div>
-        <button id="darkModeToggle" class="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-            <!-- Sun Icon -->
-            <svg class="w-6 h-6 text-yellow-500 block dark:hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
-            <!-- Moon Icon -->
-            <svg class="w-6 h-6 text-gray-400 hidden dark:block" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
+        <button
+                type="submit"
+                class="mt-4 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded transition duration-200"
+        >
+            Save Student
         </button>
-    </header>
+    </form>
 
-    <main class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        <!-- Left Column: Forms -->
-        <div class="lg:col-span-1 space-y-8">
-            <!-- Add Student Form -->
-            <div class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-md">
-                <h3 class="text-xl font-semibold mb-4 border-b dark:border-gray-700 pb-2 flex items-center">
-                    <svg class="w-6 h-6 mr-2 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"></path></svg>
-                    Add New Student
-                </h3>
-                <form id="addStudentForm" class="space-y-4">
-                    <div>
-                        <label for="name" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Name</label>
-                        <input type="text" id="name" name="name" class="mt-1 block w-full bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" required>
-                    </div>
-                    <div>
-                        <label for="marks" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Marks</label>
-                        <input type="number" id="marks" name="marks" class="mt-1 block w-full bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" required>
-                    </div>
-                    <button type="submit" class="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:focus:ring-offset-gray-900">Add Student</button>
-                </form>
-            </div>
-            <!-- Find Student by ID Form -->
-            <div class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-md">
-                <h3 class="text-xl font-semibold mb-4 border-b dark:border-gray-700 pb-2 flex items-center">
-                    <svg class="w-6 h-6 mr-2 text-teal-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
-                    Find Student by ID
-                </h3>
-                <form id="findStudentForm" class="flex space-x-2">
-                    <input type="number" id="findId" name="findId" placeholder="Enter Student ID..." class="block w-full bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-teal-500 focus:border-teal-500 sm:text-sm" required>
-                    <button type="submit" class="py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-teal-600 hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500 dark:focus:ring-offset-gray-900">Find</button>
-                </form>
-            </div>
-        </div>
-
-        <!-- Right Column: Students Table -->
-        <div class="lg:col-span-2 bg-white dark:bg-gray-800 rounded-xl shadow-md overflow-hidden">
-            <div class="p-6">
-                <h3 class="text-xl font-semibold">All Students</h3>
-            </div>
-            <div class="overflow-x-auto">
-                <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-                    <thead class="bg-gray-50 dark:bg-gray-700">
-                    <tr>
-                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">ID</th>
-                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Name</th>
-                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Marks</th>
-                        <th scope="col" class="px-6 py-3 text-center text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Actions</th>
-                    </tr>
-                    </thead>
-                    <tbody id="studentTableBody" class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
-                    <!-- Student rows will be injected here by JavaScript -->
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    </main>
-</div>
-
-<!-- Edit Student Modal -->
-<div id="editModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full flex items-center justify-center hidden z-50">
-    <div class="relative mx-auto p-5 border w-full max-w-md shadow-lg rounded-xl bg-white dark:bg-gray-800 slide-in">
-        <div class="mt-3 text-center">
-            <h3 class="text-lg leading-6 font-medium text-gray-900 dark:text-white mb-4">Edit Student</h3>
-            <form id="editStudentForm" class="space-y-4 text-left">
-                <input type="hidden" id="editId">
-                <div>
-                    <label for="editName" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Name</label>
-                    <input type="text" id="editName" class="mt-1 block w-full bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" required>
-                </div>
-                <div>
-                    <label for="editMarks" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Marks</label>
-                    <input type="number" id="editMarks" class="mt-1 block w-full bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" required>
-                </div>
-                <div class="items-center px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
-                    <button type="submit" class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-indigo-600 text-base font-medium text-white hover:bg-indigo-700 focus:outline-none sm:ml-3 sm:w-auto sm:text-sm">Save Changes</button>
-                    <button type="button" id="closeEditModal" class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 dark:border-gray-600 shadow-sm px-4 py-2 bg-white dark:bg-gray-700 text-base font-medium text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-600 focus:outline-none sm:mt-0 sm:w-auto sm:text-sm">Cancel</button>
-                </div>
-            </form>
-        </div>
+    <!-- Students Table -->
+    <div class="overflow-x-auto bg-white shadow-md rounded-lg">
+        <table class="w-full border-collapse">
+            <thead>
+            <tr class="bg-gray-200">
+                <th class="border px-4 py-2">ID</th>
+                <th class="border px-4 py-2">Name</th>
+                <th class="border px-4 py-2">Email</th>
+                <th class="border px-4 py-2">Course</th>
+                <th class="border px-4 py-2">Actions</th>
+            </tr>
+            </thead>
+            <tbody id="studentTable"></tbody>
+        </table>
     </div>
-</div>
-
-<!-- Delete Confirmation Modal -->
-<div id="deleteModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full flex items-center justify-center hidden z-50">
-    <div class="relative mx-auto p-5 border w-full max-w-md shadow-lg rounded-xl bg-white dark:bg-gray-800 slide-in">
-        <div class="mt-3 text-center">
-            <div class="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-red-100 dark:bg-red-900">
-                <svg class="h-6 w-6 text-red-600 dark:text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
-            </div>
-            <h3 class="text-lg leading-6 font-medium text-gray-900 dark:text-white mt-2">Delete Student</h3>
-            <div class="mt-2 px-7 py-3">
-                <p class="text-sm text-gray-500 dark:text-gray-400">Are you sure you want to delete this student? This action cannot be undone.</p>
-            </div>
-            <div class="items-center px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
-                <button id="confirmDelete" class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-red-600 text-base font-medium text-white hover:bg-red-700 focus:outline-none sm:ml-3 sm:w-auto sm:text-sm">Delete</button>
-                <button id="cancelDelete" class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 dark:border-gray-600 shadow-sm px-4 py-2 bg-white dark:bg-gray-700 text-base font-medium text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-600 focus:outline-none sm:mt-0 sm:w-auto sm:text-sm">Cancel</button>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Notification Toast -->
-<div id="notification" class="fixed bottom-5 right-5 bg-green-500 text-white py-2 px-4 rounded-lg shadow-lg hidden slide-in">
-    <p id="notificationMessage"></p>
 </div>
 
 <script>
-    document.addEventListener('DOMContentLoaded', () => {
-        // --- API & STATE MANAGEMENT ---
-        const API_URL = 'https://springbootcrudapp-production.up.railway.app/students';
-        // The endpoint for your Spring Boot controller
-        let students = []; // This will be populated from the API, not hardcoded.
-        let studentToDeleteId = null;
+    // ✅ Relative API URL (works both locally & on Railway)
+    const API_URL = '/students';
 
-        // --- DOM ELEMENTS ---
-        const tableBody = document.getElementById('studentTableBody');
-        const addForm = document.getElementById('addStudentForm');
-        const findForm = document.getElementById('findStudentForm');
+    async function loadStudents() {
+        try {
+            const response = await fetch(API_URL);
+            if (!response.ok) throw new Error('Failed to fetch students');
+            const students = await response.json();
 
-        const editModal = document.getElementById('editModal');
-        const editForm = document.getElementById('editStudentForm');
-        const closeEditModalBtn = document.getElementById('closeEditModal');
+            const table = document.getElementById('studentTable');
+            table.innerHTML = '';
 
-        const deleteModal = document.getElementById('deleteModal');
-        const confirmDeleteBtn = document.getElementById('confirmDelete');
-        const cancelDeleteBtn = document.getElementById('cancelDelete');
-
-        const notification = document.getElementById('notification');
-        const notificationMessage = document.getElementById('notificationMessage');
-        const darkModeToggle = document.getElementById('darkModeToggle');
-
-        // --- API FUNCTIONS ---
-
-        // GET all students
-        const fetchStudents = async () => {
-            try {
-                const response = await fetch(API_URL);
-                if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-                students = await response.json();
-                renderTable();
-            } catch (error) {
-                console.error("Failed to fetch students:", error);
-                showNotification("Error: Could not load student data.", true);
-            }
-        };
-
-        // POST a new student
-        const addStudent = async (name, marks) => {
-            try {
-                const response = await fetch(API_URL, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ name, marks }),
-                });
-                if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-                await fetchStudents(); // CRITICAL: Refresh data after action
-                addForm.reset();
-                showNotification('Student added successfully!');
-            } catch (error) {
-                console.error("Failed to add student:", error);
-                showNotification("Error: Could not add student.", true);
-            }
-        };
-
-        // PUT (update) a student
-        const updateStudent = async (id, name, marks) => {
-            try {
-                const response = await fetch(`${API_URL}/${id}`, {
-                    method: 'PUT',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ id, name, marks }),
-                });
-                if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-                await fetchStudents(); // CRITICAL: Refresh data after action
-                editModal.classList.add('hidden');
-                showNotification('Student updated successfully!');
-            } catch (error) {
-                console.error("Failed to update student:", error);
-                showNotification("Error: Could not update student.", true);
-            }
-        };
-
-        // DELETE a student
-        const deleteStudent = async (id) => {
-            try {
-                const response = await fetch(`${API_URL}/${id}`, {
-                    method: 'DELETE',
-                });
-                if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-                await fetchStudents(); // CRITICAL: Refresh data after action
-                deleteModal.classList.add('hidden');
-                showNotification('Student deleted successfully!');
-                studentToDeleteId = null;
-            } catch (error) {
-                console.error("Failed to delete student:", error);
-                showNotification("Error: Could not delete student.", true);
-            }
-        };
-
-        // --- RENDER FUNCTION ---
-        const renderTable = () => {
-            tableBody.innerHTML = '';
-            if (students.length === 0) {
-                tableBody.innerHTML = `<tr><td colspan="4" class="text-center py-10 text-gray-500">No students found. Add one to get started!</td></tr>`;
-                return;
-            }
-            students.forEach(s => {
-                const row = document.createElement('tr');
-                row.id = `student-${s.id}`;
-                row.className = 'hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors duration-150';
-                row.innerHTML = `
-                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-100">${s.id}</td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600 dark:text-gray-300">${s.name}</td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600 dark:text-gray-300">${s.marks}</td>
-                    <td class="px-6 py-4 whitespace-nowrap text-center text-sm font-medium space-x-2">
-                        <button data-id="${s.id}" class="edit-btn text-yellow-600 hover:text-yellow-900 dark:hover:text-yellow-400">Edit</button>
-                        <button data-id="${s.id}" class="delete-btn text-red-600 hover:text-red-900 dark:hover:text-red-400">Delete</button>
-                    </td>
-                `;
-                tableBody.appendChild(row);
+            students.forEach((student) => {
+                const row = `
+            <tr>
+              <td class="border px-4 py-2">${student.id}</td>
+              <td class="border px-4 py-2">${student.name}</td>
+              <td class="border px-4 py-2">${student.email}</td>
+              <td class="border px-4 py-2">${student.course}</td>
+              <td class="border px-4 py-2 text-center">
+                <button onclick="editStudent(${student.id}, '${student.name}', '${student.email}', '${student.course}')"
+                        class="bg-yellow-500 hover:bg-yellow-600 text-white px-3 py-1 rounded">
+                  Edit
+                </button>
+                <button onclick="deleteStudent(${student.id})"
+                        class="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded ml-2">
+                  Delete
+                </button>
+              </td>
+            </tr>`;
+                table.innerHTML += row;
             });
+        } catch (error) {
+            console.error('Error loading students:', error);
+            document.getElementById('studentTable').innerHTML =
+                `<tr><td colspan="5" class="text-center text-red-600 py-4">⚠️ Could not load student data.</td></tr>`;
+        }
+    }
+
+    async function saveStudent(event) {
+        event.preventDefault();
+
+        const id = document.getElementById('studentId').value;
+        const student = {
+            name: document.getElementById('name').value,
+            email: document.getElementById('email').value,
+            course: document.getElementById('course').value,
         };
 
-        // --- NOTIFICATION HANDLER ---
-        const showNotification = (message, isError = false) => {
-            notificationMessage.textContent = message;
-            notification.className = `fixed bottom-5 right-5 text-white py-2 px-4 rounded-lg shadow-lg slide-in ${isError ? 'bg-red-500' : 'bg-green-500'}`;
-            notification.classList.remove('hidden');
-            setTimeout(() => {
-                notification.classList.add('slide-out');
-                notification.classList.remove('slide-in');
-                setTimeout(() => {
-                    notification.classList.add('hidden');
-                    notification.classList.remove('slide-out');
-                }, 300);
-            }, 3000);
-        };
+        const method = id ? 'PUT' : 'POST';
+        const url = id ? `${API_URL}/${id}` : API_URL;
 
-        // --- EVENT HANDLERS ---
+        try {
+            const response = await fetch(url, {
+                method,
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(student),
+            });
 
-        // Add Student
-        addForm.addEventListener('submit', (e) => {
-            e.preventDefault();
-            const name = addForm.name.value.trim();
-            const marks = parseInt(addForm.marks.value, 10);
-            if(name && !isNaN(marks)) {
-                addStudent(name, marks);
-            }
-        });
+            if (!response.ok) throw new Error('Failed to save student');
 
-        // Find Student by ID
-        findForm.addEventListener('submit', (e) => {
-            e.preventDefault();
-            const id = parseInt(findForm.findId.value, 10);
+            await loadStudents();
+            document.getElementById('studentForm').reset();
+            document.getElementById('studentId').value = '';
+        } catch (error) {
+            console.error('Error saving student:', error);
+            alert('⚠️ Failed to save student. Please try again.');
+        }
+    }
 
-            document.querySelectorAll('.highlight').forEach(el => el.classList.remove('highlight'));
+    function editStudent(id, name, email, course) {
+        document.getElementById('studentId').value = id;
+        document.getElementById('name').value = name;
+        document.getElementById('email').value = email;
+        document.getElementById('course').value = course;
+    }
 
-            const row = document.getElementById(`student-${id}`);
-            if (row) {
-                row.classList.add('highlight');
-                row.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                showNotification(`Student ID ${id} found!`);
-            } else {
-                showNotification(`Student with ID ${id} not found.`, true);
-            }
-            findForm.reset();
-        });
+    async function deleteStudent(id) {
+        if (!confirm('Are you sure you want to delete this student?')) return;
+        try {
+            const response = await fetch(`${API_URL}/${id}`, { method: 'DELETE' });
+            if (!response.ok) throw new Error('Failed to delete student');
+            await loadStudents();
+        } catch (error) {
+            console.error('Error deleting student:', error);
+            alert('⚠️ Failed to delete student. Please try again.');
+        }
+    }
 
-        // Handle Edit and Delete button clicks (Event Delegation)
-        tableBody.addEventListener('click', (e) => {
-            const id = e.target.dataset.id;
-            if (e.target.classList.contains('edit-btn')) {
-                const student = students.find(s => s.id == id);
-                if (student) {
-                    editForm.editId.value = student.id;
-                    editForm.editName.value = student.name;
-                    editForm.editMarks.value = student.marks;
-                    editModal.classList.remove('hidden');
-                }
-            }
-            if (e.target.classList.contains('delete-btn')) {
-                studentToDeleteId = id;
-                deleteModal.classList.remove('hidden');
-            }
-        });
-
-        // Edit Modal
-        editForm.addEventListener('submit', (e) => {
-            e.preventDefault();
-            const id = parseInt(editForm.editId.value, 10);
-            const name = editForm.editName.value.trim();
-            const marks = parseInt(editForm.editMarks.value, 10);
-
-            if (name && !isNaN(marks)) {
-                updateStudent(id, name, marks);
-            }
-        });
-        closeEditModalBtn.addEventListener('click', () => editModal.classList.add('hidden'));
-
-        // Delete Modal
-        confirmDeleteBtn.addEventListener('click', () => {
-            if (studentToDeleteId !== null) {
-                deleteStudent(studentToDeleteId);
-            }
-        });
-        cancelDeleteBtn.addEventListener('click', () => deleteModal.classList.add('hidden'));
-
-        // --- DARK MODE ---
-        const applyTheme = (isDark) => {
-            const sunIcon = document.querySelector('#darkModeToggle svg.text-yellow-500');
-            const moonIcon = document.querySelector('#darkModeToggle svg.text-gray-400');
-            if (isDark) {
-                document.documentElement.classList.add('dark');
-                sunIcon.classList.add('hidden');
-                moonIcon.classList.remove('hidden');
-            } else {
-                document.documentElement.classList.remove('dark');
-                sunIcon.classList.remove('hidden');
-                moonIcon.classList.add('hidden');
-            }
-        };
-
-        darkModeToggle.addEventListener('click', () => {
-            const isDark = !document.documentElement.classList.contains('dark');
-            localStorage.setItem('darkMode', isDark);
-            applyTheme(isDark);
-        });
-
-        // --- INITIALIZATION ---
-        const savedTheme = localStorage.getItem('darkMode') === 'true';
-        applyTheme(savedTheme);
-        fetchStudents(); // Load initial data from the server
-    });
+    document.getElementById('studentForm').addEventListener('submit', saveStudent);
+    window.onload = loadStudents;
 </script>
-
 </body>
 </html>
-
