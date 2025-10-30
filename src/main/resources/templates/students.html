@@ -5,9 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Student Management</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
         :root {
             --primary-color: #007bff;
+            --secondary-color: #6c757d;
             --danger-color: #dc3545;
             --success-color: #28a745;
             --light-color: #f8f9fa;
@@ -39,7 +41,6 @@
             margin-bottom: 25px;
         }
 
-        /* --- Card Layout --- */
         .card {
             background-color: #ffffff;
             border-radius: var(--border-radius);
@@ -48,7 +49,6 @@
             margin-bottom: 20px;
         }
 
-        /* --- Table Styling --- */
         table {
             width: 100%;
             border-collapse: collapse;
@@ -58,6 +58,7 @@
             padding: 12px 15px;
             border-bottom: 1px solid #dee2e6;
             text-align: left;
+            vertical-align: middle;
         }
 
         th {
@@ -68,14 +69,6 @@
             font-size: 0.9em;
         }
 
-        /* Align first and last th/td text */
-        tr th:first-child, tr td:first-child {
-            text-align: left;
-        }
-        tr th:last-child, tr td:last-child {
-            text-align: right;
-        }
-
         tbody tr:hover {
             background-color: #f8f9fa;
         }
@@ -83,8 +76,12 @@
         /* --- Form Styling --- */
         form {
             display: grid;
-            grid-template-columns: 1fr 1fr 150px; /* Two inputs, one button */
             gap: 15px;
+        }
+
+        /* Make 'Add' form grid-based */
+        #studentForm {
+            grid-template-columns: 1fr 1fr 150px;
             align-items: center;
         }
 
@@ -93,8 +90,8 @@
             border: 1px solid #ccc;
             border-radius: var(--border-radius);
             font-size: 1em;
-            width: 100%; /* Make input fill its grid cell */
-            box-sizing: border-box; /* Important for padding */
+            width: 100%;
+            box-sizing: border-box;
         }
 
         input:focus {
@@ -113,25 +110,103 @@
             font-weight: 500;
             font-size: 1em;
             transition: all 0.2s ease;
+            display: inline-flex; /* For aligning icon and text */
+            align-items: center;
+            justify-content: center;
+            gap: 8px; /* Space between icon and text */
         }
 
         button[type="submit"] {
             background-color: var(--primary-color);
         }
-
         button[type="submit"]:hover {
             background-color: #0056b3;
         }
 
-        button.delete {
-            background-color: var(--danger-color);
+        /* Icon-only buttons for Edit/Delete */
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+        }
+        .btn-icon {
+            padding: 8px 10px;
+            width: 40px; /* Make it squarish */
+            height: 40px;
+            font-size: 1.1em;
         }
 
-        button.delete:hover {
+        .btn-edit {
+            background-color: var(--secondary-color);
+        }
+        .btn-edit:hover {
+            background-color: #5a6268;
+        }
+
+        .btn-delete {
+            background-color: var(--danger-color);
+        }
+        .btn-delete:hover {
             background-color: #c82333;
         }
 
-        /* Loading/Error state */
+        /* --- 2. ADDED: Modal Styles --- */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.6);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .modal-content {
+            background-color: #fff;
+            padding: 30px;
+            border-radius: var(--border-radius);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            width: 90%;
+            max-width: 500px;
+            position: relative; /* For the close button */
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #dee2e6;
+            padding-bottom: 15px;
+        }
+
+        .modal-header h3 {
+            margin: 0;
+            font-size: 1.5em;
+        }
+
+        .close-button {
+            background: none;
+            border: none;
+            font-size: 2em;
+            color: #aaa;
+            cursor: pointer;
+            padding: 0;
+            line-height: 1;
+        }
+        .close-button:hover {
+            color: var(--dark-color);
+        }
+
+        /* Utility class to hide/show modal */
+        .hidden {
+            display: none;
+        }
+
+        /* --- Status Text --- */
         .status-text {
             text-align: center;
             padding: 20px;
@@ -155,7 +230,7 @@
                 <th>ID</th>
                 <th>Name</th>
                 <th>Marks</th>
-                <th>Actions</th>
+                <th style="text-align:right;">Actions</th>
             </tr>
             </thead>
             <tbody id="studentBody">
@@ -171,14 +246,45 @@
         <form id="studentForm">
             <input type="text" id="name" placeholder="Name" required>
             <input type="number" id="marks" placeholder="Marks" required>
-            <button type="submit">Add Student</button>
+            <button type="submit">
+                <i class="fas fa-plus"></i> Add Student
+            </button>
         </form>
     </div>
 </div>
 
+<div id="editModal" class="modal-overlay hidden">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3>Edit Student</h3>
+            <button class="close-button" onclick="closeModal()">&times;</button>
+        </div>
+
+        <form id="editStudentForm">
+            <input type="hidden" id="editStudentId">
+
+            <div>
+                <label for="editName">Name:</label>
+                <input type="text" id="editName" required>
+            </div>
+
+            <div>
+                <label for="editMarks">Marks:</label>
+                <input type="number" id="editMarks" required>
+            </div>
+
+            <button type="submit">
+                <i class="fas fa-save"></i> Save Changes
+            </button>
+        </form>
+    </div>
+</div>
+
+
 <script>
     const API_URL = "https://spring-boot-crud-app-using-jpa-and-jdbc-production.up.railway.app/students";
 
+    // 4. UPDATED: fetchStudents to include Edit button and icons
     async function fetchStudents() {
         const tbody = document.getElementById("studentBody");
         try {
@@ -188,7 +294,7 @@
             }
             const data = await response.json();
 
-            tbody.innerHTML = ""; // Clear loading state
+            tbody.innerHTML = "";
 
             if (data.length === 0) {
                 tbody.innerHTML = "<tr><td colspan='4' class='status-text'>No students found</td></tr>";
@@ -196,13 +302,21 @@
             }
 
             data.forEach(student => {
+                // Use single quotes for student.name so it's a valid string in JS
                 const row = `
                         <tr>
                             <td>${student.id}</td>
                             <td>${student.name}</td>
                             <td>${student.marks}</td>
                             <td>
-                                <button class="delete" onclick="deleteStudent(${student.id})">Delete</button>
+                                <div class="action-buttons">
+                                    <button class="btn-icon btn-edit" onclick="openEditModal(${student.id}, '${student.name}', ${student.marks})">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                    <button class="btn-icon btn-delete" onclick="deleteStudent(${student.id})">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </div>
                             </td>
                         </tr>`;
                 tbody.innerHTML += row;
@@ -216,11 +330,8 @@
 
     async function addStudent(event) {
         event.preventDefault();
-        const nameInput = document.getElementById("name");
-        const marksInput = document.getElementById("marks");
-
-        const name = nameInput.value;
-        const marks = marksInput.value;
+        const name = document.getElementById("name").value;
+        const marks = document.getElementById("marks").value;
 
         try {
             await fetch(API_URL, {
@@ -228,31 +339,78 @@
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ name, marks })
             });
-
             document.getElementById("studentForm").reset();
-            fetchStudents(); // Refresh the list
+            fetchStudents();
         } catch (error) {
             console.error("Error adding student:", error);
-            alert("Could not add student. Please check the console.");
+            alert("Could not add student.");
         }
     }
 
     async function deleteStudent(id) {
-        // Optional: Add a confirmation dialog
         if (!confirm("Are you sure you want to delete this student?")) {
             return;
         }
-
         try {
             await fetch(`${API_URL}/${id}`, { method: "DELETE" });
-            fetchStudents(); // Refresh the list
+            fetchStudents();
         } catch (error) {
             console.error("Error deleting student:", error);
-            alert("Could not delete student. Please check the console.");
+            alert("Could not delete student.");
         }
     }
 
+    // --- 5. ADDED: All new JavaScript for the Modal ---
+
+    const editModal = document.getElementById('editModal');
+    const editStudentForm = document.getElementById('editStudentForm');
+
+    // Function to open the modal and populate it with data
+    function openEditModal(id, name, marks) {
+        document.getElementById('editStudentId').value = id;
+        document.getElementById('editName').value = name;
+        document.getElementById('editMarks').value = marks;
+        editModal.classList.remove('hidden');
+    }
+
+    // Function to close the modal
+    function closeModal() {
+        editModal.classList.add('hidden');
+    }
+
+    // Close modal if user clicks on the overlay background
+    editModal.addEventListener('click', (e) => {
+        if (e.target === editModal) {
+            closeModal();
+        }
+    });
+
+    // Handle the edit form submission
+    async function updateStudent(event) {
+        event.preventDefault();
+
+        const id = document.getElementById('editStudentId').value;
+        const name = document.getElementById('editName').value;
+        const marks = document.getElementById('editMarks').value;
+
+        try {
+            await fetch(`${API_URL}/${id}`, {
+                method: "PUT", // Use PUT for updates
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ name, marks })
+            });
+
+            closeModal();
+            fetchStudents(); // Refresh the list
+        } catch (error) {
+            console.error("Error updating student:", error);
+            alert("Could not update student.");
+        }
+    }
+
+    // --- Event Listeners ---
     document.getElementById("studentForm").addEventListener("submit", addStudent);
+    editStudentForm.addEventListener("submit", updateStudent);
 
     // Initial fetch
     fetchStudents();
